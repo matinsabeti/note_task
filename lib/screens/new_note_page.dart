@@ -24,6 +24,8 @@ class _NewNotePageState extends State<NewNotePage> {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        title: Text('${widget.categoryName} Notes'),
+        centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.close_rounded, size: 28),

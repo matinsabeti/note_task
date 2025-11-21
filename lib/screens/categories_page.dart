@@ -45,114 +45,150 @@ class _CategoriesPageState extends State<CategoriesPage> {
         child: categoriedNotes.isNotEmpty
             ? ListView.builder(
                 itemCount: categoriedNotes.length,
-                itemBuilder: (context, index) => InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            NotePage(noteId: categoriedNotes[index].id),
-                      ),
-                    );
-                  },
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width - 20,
-                    height: 70,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Text(
-                            categoriedNotes[index].title,
-                            style: TextStyle(fontSize: 16),
-                            softWrap: true,
-                          ),
-                          Expanded(child: SizedBox()),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                categoriedNotes[index].isCompleted
-                                    ? Icons.check_circle_rounded
-                                    : Icons.radio_button_unchecked_rounded,
-                                color: categoriedNotes[index].isCompleted
-                                    ? Colors.green
-                                    : Colors.grey,
-                              ),
-                              const SizedBox(height: 4),
-                              Icon(
-                                categoriedNotes[index].isDraft
-                                    ? Icons.drafts_rounded
-                                    : Icons.mark_email_read_rounded,
-                                color: categoriedNotes[index].isDraft
-                                    ? Colors.orange
-                                    : Colors.grey,
-                              ),
-                            ],
-                          ),
-                          // Delete icon
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () async {
-                              return showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Confirm Deletion'),
-                                  content: RichText(
-                                    text: TextSpan(
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                      children: [
-                                        const TextSpan(
-                                          text:
-                                              'Are you sure you want to delete ',
-                                        ),
-                                        TextSpan(
-                                          text: categoriedNotes[index].title,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(text: ' note?'),
-                                      ],
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              NotePage(noteId: categoriedNotes[index].id),
+                        ),
+                      );
+                    },
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width - 20,
+                      height: 70,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Text(
+                              categoriedNotes[index].title,
+                              style: TextStyle(fontSize: 16),
+                              softWrap: true,
+                            ),
+                            Expanded(child: SizedBox()),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    noteDatabase.updateNote(
+                                      id: categoriedNotes[index].id,
+                                      isCompleted:
+                                          !categoriedNotes[index].isCompleted,
+                                    );
+                                  },
+                                  child: AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 100),
+                                    switchInCurve: Curves.bounceIn,
+                                    switchOutCurve: Curves.bounceOut,
+                                    child: Icon(
+                                      key: Key(
+                                        "complete:${categoriedNotes[index].isCompleted}",
+                                      ),
+                                      categoriedNotes[index].isCompleted
+                                          ? Icons.check_circle_rounded
+                                          : Icons
+                                                .radio_button_unchecked_rounded,
+                                      color: categoriedNotes[index].isCompleted
+                                          ? Colors.green
+                                          : Colors.grey,
                                     ),
                                   ),
-
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.inversePrimary,
-                                      ),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        // do delete here
-                                        await noteDatabase.deleteNote(
-                                          categoriedNotes[index].id,
-                                        );
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.of(context).pop(true);
-                                      },
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.red,
-                                      ),
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                        ],
+                                const SizedBox(height: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    noteDatabase.updateNote(
+                                      id: categoriedNotes[index].id,
+                                      isDraft: !categoriedNotes[index].isDraft,
+                                    );
+                                  },
+                                  child: AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 100),
+                                    switchInCurve: Curves.bounceIn,
+                                    switchOutCurve: Curves.bounceOut,
+                                    child: Icon(
+                                      key: Key(
+                                        "draft:${categoriedNotes[index].isDraft}",
+                                      ),
+                                      categoriedNotes[index].isDraft
+                                          ? Icons.drafts_rounded
+                                          : Icons.mark_email_read_rounded,
+                                      color: categoriedNotes[index].isDraft
+                                          ? Colors.orange
+                                          : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Delete icon
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () async {
+                                return showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Confirm Deletion'),
+                                    content: RichText(
+                                      text: TextSpan(
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                        children: [
+                                          const TextSpan(
+                                            text:
+                                                'Are you sure you want to delete ',
+                                          ),
+                                          TextSpan(
+                                            text: categoriedNotes[index].title,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const TextSpan(text: ' note?'),
+                                        ],
+                                      ),
+                                    ),
+
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Theme.of(
+                                            context,
+                                          ).colorScheme.inversePrimary,
+                                        ),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          // do delete here
+                                          await noteDatabase.deleteNote(
+                                            categoriedNotes[index].id,
+                                          );
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.red,
+                                        ),
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               )
             : Center(
                 child: Text(
