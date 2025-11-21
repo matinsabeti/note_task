@@ -47,22 +47,29 @@ class NoteDatabase extends ChangeNotifier {
     notifyListeners();
   }
 
+  // R E A D - a note from db
+  Note? fetchNoteById(int id) {
+    final Note? note = isar.notes.getSync(id);
+    return note;
+  }
+
   // U P D A T E - a note in db
-  Future<void> updateNote(
-    int id,
-    String title,
-    String content,
-    String category,
-    bool isDraft,
-    bool isCompleted,
-  ) async {
+  Future<void> updateNote({
+    required int id,
+    String? title,
+    String? content,
+    String? category,
+    bool? isDraft,
+    bool? isCompleted,
+  }) async {
     final note = await isar.notes.get(id);
     if (note != null) {
-      note.title = title;
-      note.content = content;
-      note.category = category;
-      note.isDraft = isDraft;
-      note.isCompleted = isCompleted;
+      // Update only non-null fields
+      if (title != null) note.title = title;
+      if (content != null) note.content = content;
+      if (category != null) note.category = category;
+      if (isDraft != null) note.isDraft = isDraft;
+      if (isCompleted != null) note.isCompleted = isCompleted;
       await isar.writeTxn(() => isar.notes.put(note));
       await fetchNotes();
     }

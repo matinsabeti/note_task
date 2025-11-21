@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // note database
     final noteDatabase = context.watch<NoteDatabase>();
+    noteDatabase.fetchNotes();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Note Page')),
@@ -32,15 +33,17 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: InkWell(
               onTap: () {
-                noteDatabase.getNotesByCategory(categoriesName[index]);
+                // noteDatabase.addNote(
+                //   title: "work 3",
+                //   content: "test 3",
+                //   category: "Work",
+                // );
                 // Handle category tap
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CategoriesPage(
-                      categoryName: categoriesName[index],
-                      notes: noteDatabase.currentNotes,
-                    ),
+                    builder: (context) =>
+                        CategoriesPage(categoryName: categoriesName[index]),
                   ),
                 );
               },
