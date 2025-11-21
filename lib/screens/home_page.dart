@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:note_task/database/note_database.dart';
 import 'package:note_task/screens/categories_page.dart';
+import 'package:note_task/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isDarkMode = false;
   final List categoriesIcon = [
     Icons.work_rounded,
     Icons.school_rounded,
@@ -26,6 +29,34 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Note Page')),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 100, left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Dark Mode",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  CupertinoSwitch(
+                    value: isDarkMode,
+                    onChanged: (value) {
+                      isDarkMode = !isDarkMode;
+                      Provider.of<ThemeProvider>(
+                        context,
+                        listen: false,
+                      ).toggleTheme();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       body: ListView.builder(
         itemCount: categoriesIcon.length,
         itemBuilder: (context, index) {
@@ -33,11 +64,6 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: InkWell(
               onTap: () {
-                // noteDatabase.addNote(
-                //   title: "work 3",
-                //   content: "test 3",
-                //   category: "Work",
-                // );
                 // Handle category tap
                 Navigator.push(
                   context,
